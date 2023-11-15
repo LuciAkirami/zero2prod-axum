@@ -2,8 +2,8 @@
 // use serde_json::{json, Value};
 
 // Connection is need to import PgConnection::connect
-use sqlx::{Connection, PgConnection};
-use zero2prod_axum::configuration;
+// use sqlx::{Connection, PgConnection};
+// use zero2prod_axum::configuration;
 
 #[tokio::test]
 async fn test_simple_base() -> httpc_test::Result<()> {
