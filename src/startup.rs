@@ -3,26 +3,35 @@ use axum::{
     routing::{get, post},
     Router,
 };
+use sqlx::PgPool;
 
 use crate::routes::{health_check, subscribe};
 
-async fn greet(Path(name): Path<String>) -> String {
-    format!("Hello, {}!", name)
+#[derive(Clone)]
+pub struct AppState {
+    pub connection_pool: PgPool,
 }
 
-pub fn router() -> Router {
+pub fn router(appstate: AppState) -> Router {
     // build our application with a single route
     Router::new()
         .route("/:name", get(greet))
         .route("/health_check", get(health_check))
         .route("/subscriptions", post(subscribe))
+        .with_state(appstate)
 }
 
-pub async fn run() {
-    let app = router();
+pub async fn run(connection_pool: PgPool) {
+    let appstate = AppState { connection_pool };
+    let app = router(appstate);
+
     // run it with hyper on localhost:3000
     axum::Server::bind(&"127.0.0.1:3000".parse().unwrap())
         .serve(app.into_make_service())
         .await
         .unwrap();
+}
+
+async fn greet(Path(name): Path<String>) -> String {
+    format!("Hello, {}!", name)
 }
