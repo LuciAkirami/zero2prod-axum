@@ -1,3 +1,4 @@
+use tokio::net::TcpListener;
 use zero2prod_axum::{configuration::parse_configuration, startup::run};
 
 #[tokio::main]
@@ -18,5 +19,12 @@ async fn main() {
         .await
         .expect("Falied to connect to Postgres.");
 
-    run(connection_pool).await;
+    let address = format!("127.0.0.1:0");
+    let listener = TcpListener::bind(address)
+        .await
+        .unwrap()
+        .local_addr()
+        .unwrap();
+
+    run(connection_pool, listener).await;
 }

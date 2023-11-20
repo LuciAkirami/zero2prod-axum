@@ -1,3 +1,5 @@
+use std::net::SocketAddr;
+
 use axum::{
     extract::Path,
     routing::{get, post},
@@ -21,12 +23,12 @@ pub fn router(appstate: AppState) -> Router {
         .with_state(appstate)
 }
 
-pub async fn run(connection_pool: PgPool) {
+pub async fn run(connection_pool: PgPool, listener: SocketAddr) {
     let appstate = AppState { connection_pool };
     let app = router(appstate);
 
     // run it with hyper on localhost:3000
-    axum::Server::bind(&"127.0.0.1:3000".parse().unwrap())
+    axum::Server::bind(&listener)
         .serve(app.into_make_service())
         .await
         .unwrap();
