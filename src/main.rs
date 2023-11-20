@@ -19,7 +19,7 @@ async fn main() {
         .await
         .expect("Falied to connect to Postgres.");
 
-    let address = format!("127.0.0.1:0");
+    let address = "127.0.0.1:0";
     let listener = TcpListener::bind(address)
         .await
         .unwrap()

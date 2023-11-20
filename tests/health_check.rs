@@ -146,7 +146,7 @@ use tokio::net::TcpListener;
 use zero2prod_axum::startup;
 
 async fn setup_app(pool: PgPool) -> u16 {
-    let address = format!("127.0.0.1:0");
+    let address = "127.0.0.1:0";
     let listener = TcpListener::bind(address)
         .await
         .unwrap()
