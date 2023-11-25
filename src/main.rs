@@ -1,5 +1,7 @@
+// use env_logger::Env;
 use tokio::net::TcpListener;
-use zero2prod_axum::{configuration::parse_configuration, startup::run};
+
+use zero2prod_axum::{configuration::parse_configuration, startup::run, telemetry};
 
 #[tokio::main]
 async fn main() {
@@ -7,6 +9,10 @@ async fn main() {
     println!("{configuration:?}");
     let connection_string = configuration.database.get_connection_string();
     println!("{connection_string:?}");
+
+    // env_logger::Builder::from_env(Env::default().default_filter_or("info")).init();
+    let subscriber = telemetry::get_subscriber("zero2prod_axum".into(), "info".into());
+    telemetry::init_subcriber(subscriber);
 
     // creates a single connection
     // let connection = sqlx::PgConnection::connect(&connection_string)
@@ -25,6 +31,6 @@ async fn main() {
         .unwrap()
         .local_addr()
         .unwrap();
-
+    // info!("Listening to {}", listener);
     run(connection_pool, listener).await;
 }
